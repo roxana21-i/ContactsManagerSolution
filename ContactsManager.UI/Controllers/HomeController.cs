@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRUD_Application.Controllers
@@ -6,6 +7,7 @@ namespace CRUD_Application.Controllers
     public class HomeController : Controller
     {
         [Route("[action]")]
+        [AllowAnonymous]
         public IActionResult Error()
         {
             IExceptionHandlerPathFeature? exceptionHandlerPathFeature =

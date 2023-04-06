@@ -1,5 +1,9 @@
-﻿using CRUD_Application.Filters.ActionFilters;
+﻿using ContactsManager.Core.Domain.IdentityEntities;
+using CRUD_Application.Filters.ActionFilters;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
@@ -36,12 +40,49 @@ namespace CRUD_Application
             services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
             services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
             services.AddScoped<IPersonsSorterService, PersonsSorterService>();
-            services.AddDbContext<ApplicationDbContext>(
+			//so you can use [ServiceFilter]
+			services.AddTransient<PersonsListActionFilter>();
+			services.AddTransient<ResponseHeaderActionFilter>();
+
+            //add DbContext
+			services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
             );
-            //so you can use [ServiceFilter]
-            services.AddTransient<PersonsListActionFilter>();
-            services.AddTransient<ResponseHeaderActionFilter>();
+
+            //enable Identity
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequiredLength = 5; //default is 6
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequiredUniqueChars = 3;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>() //aplication level
+                .AddDefaultTokenProviders()
+                //repository level
+                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
+                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+
+            services.AddAuthorization(options =>
+            {
+                //for all the action methods
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
+                options.AddPolicy("NotAuthenticated", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                    {
+                        return !context.User.Identity.IsAuthenticated;
+                    });
+                });
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+            });
 
             services.AddHttpLogging(options =>
             {

@@ -34,14 +34,27 @@ else
     app.UseExceptionHandlingMiddleware();
 }
 
+app.UseHsts();
+app.UseHttpsRedirection();
+
 app.UseSerilogRequestLogging();
 
 if (builder.Environment.IsEnvironment("Test") == false)
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.UseStaticFiles();
-app.UseRouting();
-app.MapControllers();
+app.UseRouting(); //identifying action method based on route
+app.UseAuthentication(); //reading identity cookie
+app.UseAuthorization(); //validates access permissions of the user
+app.MapControllers(); //executing the filter pipeline
+
+//conventional routing
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}"); //ex: admin/home/index
+});
 
 app.Run();
 
