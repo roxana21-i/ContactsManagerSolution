@@ -26,7 +26,7 @@ namespace Entities
         [StringLength(100)]
         public string? Address { get; set; }
         public bool ReceiveNewsletter { get; set; }
-        public string? TIN { get; set; }
+        //public string? TIN { get; set; }
 
         [ForeignKey("CountryID")]
         public Country? Country { get; set; }
