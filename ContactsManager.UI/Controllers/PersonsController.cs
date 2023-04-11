@@ -94,7 +94,7 @@ namespace CRUD_Application.Controllers
 		[Route("[action]")]
 		[HttpPost]
 		[TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
-		[TypeFilter(typeof(FeatureDisabledResourceFilter))]
+		//[TypeFilter(typeof(FeatureDisabledResourceFilter))]
 		public async Task<IActionResult> Create(PersonAddRequest personRequest)
 		{
 			PersonResponse person = await _personAdderService.AddPerson(personRequest);

@@ -73,6 +73,15 @@ namespace ContactsManager.UI.Controllers
 				//}
 				//else
 				//{
+				//create 'user' role if it doesn't exist already
+				//if (await _roleManager.FindByNameAsync(UserTypeOptions.User.ToString()) is null)
+				//{
+				//	ApplicationRole applicationRole = new ApplicationRole()
+				//	{
+				//		Name = UserTypeOptions.User.ToString(),
+				//	};
+				//	await _roleManager.CreateAsync(applicationRole);
+				//}
 				//	await _userManager.AddToRoleAsync(applicationUser, UserTypeOptions.User.ToString());
 				//}
 

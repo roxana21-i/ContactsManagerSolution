@@ -4,6 +4,7 @@ using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
@@ -26,6 +27,7 @@ namespace CRUD_Application
 					Value = "My-Global-Value",
 					Order = 2
 				});
+				options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 			});
 
 			services.AddScoped<ICountriesRepository, CountriesRepository>();
