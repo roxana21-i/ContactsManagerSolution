@@ -56,25 +56,38 @@ namespace ContactsManager.UI.Controllers
 
 			if (result.Succeeded)
 			{
-				//check status of radion button
-				if(registerDTO.UserType == Core.Enums.UserTypeOptions.Admin)
+				//check status of radio button
+				//if(registerDTO.UserType == Core.Enums.UserTypeOptions.Admin)
+				//{
+				//	//Create 'Admin' role
+				//	if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
+				//	{
+				//		ApplicationRole applicationRole = new ApplicationRole()
+				//		{
+				//			Name = UserTypeOptions.Admin.ToString(),
+				//		};
+				//		await _roleManager.CreateAsync(applicationRole);
+				//	}
+				//	//Add the new user into the 'Admin' role
+				//	await _userManager.AddToRoleAsync(applicationUser, UserTypeOptions.Admin.ToString());
+				//}
+				//else
+				//{
+				//	await _userManager.AddToRoleAsync(applicationUser, UserTypeOptions.User.ToString());
+				//}
+
+				//create 'user' role if it doesn't exist already
+				if (await _roleManager.FindByNameAsync(UserTypeOptions.User.ToString()) is null)
 				{
-					//Create 'Admin' role
-					if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
+					ApplicationRole applicationRole = new ApplicationRole()
 					{
-						ApplicationRole applicationRole = new ApplicationRole()
-						{
-							Name = UserTypeOptions.Admin.ToString(),
-						};
-						await _roleManager.CreateAsync(applicationRole);
-					}
-					//Add the new user into the 'Admin' role
-					await _userManager.AddToRoleAsync(applicationUser, UserTypeOptions.Admin.ToString());
+						Name = UserTypeOptions.User.ToString(),
+					};
+					await _roleManager.CreateAsync(applicationRole);
 				}
-				else
-				{
-					await _userManager.AddToRoleAsync(applicationUser, UserTypeOptions.User.ToString());
-				}
+				//add to user role automaticallly
+				await _userManager.AddToRoleAsync(applicationUser, UserTypeOptions.User.ToString());
+				
 				await _signInManager.SignInAsync(applicationUser, isPersistent: false);
 
 				return RedirectToAction(nameof(PersonsController.Index), "Persons");
@@ -146,6 +159,8 @@ namespace ContactsManager.UI.Controllers
 			return RedirectToAction(nameof(PersonsController.Index), "Persons");
 		}
 
+
+		[Authorize("NotAuthenticated")]
 		public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
 		{
 			ApplicationUser user = await _userManager.FindByEmailAsync(email);
