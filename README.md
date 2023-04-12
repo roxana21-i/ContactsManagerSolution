@@ -11,3 +11,4 @@ Demo ASP.NET Core app that has the following functionalities:
 # Check the application here (hosted on Azure)
 [Website](contactsmanagerui20230410135116.azurewebsites.net)
 
+> Register a new account to be able to access the application 
